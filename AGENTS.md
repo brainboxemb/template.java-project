@@ -8,7 +8,8 @@ Keep this repository focused on generic tooling conformance. Product/domain func
 
 ## Workflow
 
-- Work issue-first on a feature branch and open a draft PR early.
+- Use one work-item number end to end: create issue `#N`, create `feature/pr-N-<short-slug>`, make the smallest initial commit, then convert that exact issue directly into draft PR `#N`; do not create a separate PR number for the same work item when issue conversion is available.
+- Continue implementation and evidence in that same PR and mark it ready only when reviewable.
 - Never develop directly on `main`.
 - Keep `project.yml` as the semantic tooling dependency source.
 - Keep reusable GitHub workflow refs pinned to the exact commit behind the declared released tool version.
