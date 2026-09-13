@@ -1,0 +1,78 @@
+name: Java reference-consumer verification
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap-linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout without submodules
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Require clean checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain)" || { git status --short; exit 1; }
+      - name: Bootstrap released Java tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./bootstrap.sh
+          test "$(git -C tools/tool.git-project rev-parse HEAD)" = "5db2b23b95ad0a230ab5d5d2bed725927328fcfe"
+          test "$(git -C tools/tool.java-project rev-parse HEAD)" = "3dd4b176956513948c601ec9cf95f09f6f21712a"
+          grep -F 'ref: v0.1.0' project.yml
+          tools/tool.git-project/git-project.sh validate --repo .
+
+  bootstrap-windows:
+    runs-on: windows-2025
+    timeout-minutes: 10
+    steps:
+      - name: Checkout without submodules
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Require clean checkout
+        shell: pwsh
+        run: |
+          $status = git status --porcelain
+          if ($status) { git status --short; throw "Checkout is not clean." }
+      - name: Bootstrap released Java tooling
+        shell: pwsh
+        run: |
+          .\bootstrap.ps1
+          if ((git -C tools/tool.git-project rev-parse HEAD).Trim() -ne "5db2b23b95ad0a230ab5d5d2bed725927328fcfe") { throw "Unexpected tool.git-project SHA" }
+          if ((git -C tools/tool.java-project rev-parse HEAD).Trim() -ne "3dd4b176956513948c601ec9cf95f09f6f21712a") { throw "Unexpected tool.java-project SHA" }
+          if (-not (Select-String -Path project.yml -SimpleMatch 'ref: v0.1.0')) { throw "Semantic tool release ref is missing." }
+
+  java:
+    needs: [bootstrap-linux, bootstrap-windows]
+    permissions:
+      contents: read
+    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-verify.yml@3dd4b176956513948c601ec9cf95f09f6f21712a
+    with:
+      working-directory: .
+      java-version: '8.0.504+1'
+      maven-version: '3.9.16'
+      maven-wrapper-version: '3.3.4'
+      artifact-name: template-java-project-canonical
+      artifact-path: target/template-java-project-0.1.0-SNAPSHOT.jar
+      runnable-jar-name: template-java-project-0.1.0-SNAPSHOT.jar
+      smoke-expected-output: 'template.java-project OK'
+      test-report-path: 'target/surefire-reports/**'
+      publication-artifact-paths: target/template-java-project-0.1.0-SNAPSHOT.jar
+
+  publish-build:
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    needs: java
+    permissions:
+      contents: write
+    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-publish.yml@3dd4b176956513948c601ec9cf95f09f6f21712a
+    with:
+      publication-artifact-name: template-java-project-canonical-publication
