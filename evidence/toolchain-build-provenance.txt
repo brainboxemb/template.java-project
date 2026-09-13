@@ -1,0 +1,15 @@
+toolchain_contract=1
+repository=brainboxemb/template.java-project
+event_name=pull_request
+checked_out_sha=dd7e0e100bb84cb5c7a4861c487eb1c64118e74b
+source_ref=refs/pull/3/merge
+pull_request_head_sha=ed70690507355410bc0756c22e97a7ed42e35734
+pull_request_base_sha=a40f246eccbda2876d02497866de8ed855e21757
+workflow_ref=brainboxemb/template.java-project/.github/workflows/java-verify.yml@refs/pull/3/merge
+runner_os=Linux
+runner_arch=X64
+java_baseline=8.0.504+1
+maven_baseline=3.9.16
+maven_wrapper_baseline=3.3.4
+java_runtime=openjdk version "1.8.0_504"
+maven_runtime=Apache Maven 3.9.16 (2bdd9fddda4b155ebf8000e807eb73fd829a51d5)
