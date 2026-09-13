@@ -1,0 +1,16 @@
+schema_version: 1
+
+project:
+  name: template.java-project
+
+profiles:
+  - type: java
+    config: project.java.yml
+
+dependencies:
+  - name: tool.java-project
+    role: tooling
+    type: git-submodule
+    url: https://github.com/brainboxemb/tool.java-project.git
+    path: tools/tool.java-project
+    ref: v0.1.0
