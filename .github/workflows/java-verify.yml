@@ -87,6 +87,7 @@ jobs:
           grep -F '"owner": "brainboxemb/tool.java-project"' "$execution"
           grep -F '"action": "canonical"' "$execution"
           grep -F '"owner_revision": "d0905548502577ff0a6726eadd73cd214c2bc2c9"' "$execution"
+          grep -F '"tool_java_project_version": "0.1.4"' "$execution"
           grep -F '"status": "success"' "$execution"
           test -f .moon/invocations/consumer_java.canonical/materialization.json
           test -f .moon/invocations/consumer_java.canonical/moon.log
@@ -157,6 +158,7 @@ jobs:
           test -s "$execution"
           grep -F '"schema": "brainboxemb.execution-evidence"' "$execution"
           grep -F '"owner_revision": "d0905548502577ff0a6726eadd73cd214c2bc2c9"' "$execution"
+          grep -F '"tool_java_project_version": "0.1.4"' "$execution"
           test -f publication/orchestration/materialization.json
           grep -F '"source_revision": "'"$SOURCE_REVISION"'"' publication/orchestration/materialization.json
           grep -F '"status": "success"' publication/orchestration/materialization.json
