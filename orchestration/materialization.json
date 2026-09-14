@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "tool_git_project_version": "0.2.2",
+  "moon_version": "moon 2.5.4",
+  "task": "consumer:java.canonical",
+  "source_revision": "ea380406d0451e80d3e6796b0b59543ab75ea3e3",
+  "status": "success",
+  "exit_code": 0,
+  "started_at": "2026-09-14T09:24:41Z",
+  "finished_at": "2026-09-14T09:24:53Z",
+  "duration_ms": 11727
+}
