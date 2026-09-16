@@ -2,11 +2,12 @@
 
 ## Unreleased
 
-- Adopt released `tool.java-project v0.3.0` and `tool.git-project v0.2.8` baselines.
+- Adopt released `tool.java-project v0.3.1` and `tool.git-project v0.2.8` baselines.
 - Replace consumer-owned Java orchestration with the shared Migration-006 production lifecycle.
 - Keep `moon.yml` as consumer-owned `java.canonical` / `java.windows-full` impact declarations.
 - Add selective Windows `auto|none|smoke|full` qualification and a deliberate manual override path.
 - Preserve generated `bld` publication without a duplicate Maven build.
+- Qualify the external-consumer owner-revision fix released in `tool.java-project v0.3.1`.
 
 ## Earlier baseline
 
