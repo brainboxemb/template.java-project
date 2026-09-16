@@ -30,14 +30,14 @@ tool.git-project release    v0.2.8
 exact Git commit            7c43f37e7b07cfb57638a1d1dad2501de09ba7eb
 Moon                        2.5.4
 
-tool.java-project release   v0.3.0
-exact Java tool commit      44fb270c23edd85bdb5e294ad21e76bde36cc0e6
+tool.java-project release   v0.3.1
+exact Java tool commit      4969c1316ca7dd3e2648e4098eccf2d5e7dd37d9
 Java                        Eclipse Temurin 8.0.504+1
 Maven                       3.9.16
 Maven Wrapper               3.3.4
 ```
 
-`project.yml` uses the semantic Java tooling ref `v0.3.0`. Committed gitlinks and reusable workflow callers use the exact commits behind the released baselines. This combines readable release intent with immutable execution provenance.
+`project.yml` uses the semantic Java tooling ref `v0.3.1`. Committed gitlinks and reusable workflow callers use the exact commits behind the released baselines. This combines readable release intent with immutable execution provenance.
 
 ## What this repository proves
 
