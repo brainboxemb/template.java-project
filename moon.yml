@@ -1,6 +1,6 @@
 tasks:
   java.canonical:
-    command: "bash tools/tool.java-project/java-project.sh canonical --working-directory . --java-version '8.0.504+1' --maven-version '3.9.16' --maven-wrapper-version '3.3.4' --test-report-path 'target/surefire-reports/**' --publication-root bld --publication-artifact target/template-java-project-0.1.0-SNAPSHOT.jar"
+    script: ':'
     inputs:
       - 'project.yml'
       - 'project.java.yml'
@@ -10,10 +10,35 @@ tasks:
       - '.mvn/**'
       - 'src/main/**'
       - 'src/test/**'
-      - 'tools/tool.java-project/**'
+      - '.github/workflows/java-verify.yml'
+      - 'bootstrap.sh'
+      - 'bootstrap.ps1'
+      - 'update-repo.sh'
+      - 'update-repo.ps1'
+      - 'tools/tool.git-project'
+      - 'tools/tool.java-project'
       - 'moon.yml'
       - '.moon/workspace.yml'
-    outputs:
-      - 'bld/**'
     options:
-      cache: true
+      cache: false
+
+  java.windows-full:
+    script: ':'
+    inputs:
+      - 'project.yml'
+      - 'project.java.yml'
+      - 'pom.xml'
+      - 'mvnw'
+      - 'mvnw.cmd'
+      - '.mvn/**'
+      - '.github/workflows/java-verify.yml'
+      - 'bootstrap.sh'
+      - 'bootstrap.ps1'
+      - 'update-repo.sh'
+      - 'update-repo.ps1'
+      - 'tools/tool.git-project'
+      - 'tools/tool.java-project'
+      - 'moon.yml'
+      - '.moon/workspace.yml'
+    options:
+      cache: false
