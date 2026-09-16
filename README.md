@@ -142,3 +142,5 @@ The generated `README.md` is the human-facing evidence map. `source-sha.txt` and
 ## Scope rule
 
 Keep this repository deliberately boring. Add a test here only when it proves a generic Java project-tooling contract that should work for every suitable consumer. Product-specific architecture, services, dependencies and integration scenarios belong in real product repositories instead.
+
+<!-- Migration 006 README-only canary evidence. -->
