@@ -29,7 +29,7 @@ jobs:
   java-production:
     permissions:
       contents: read
-    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-production.yml@44fb270c23edd85bdb5e294ad21e76bde36cc0e6
+    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-production.yml@4969c1316ca7dd3e2648e4098eccf2d5e7dd37d9
     with:
       base-revision: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'push' && github.event.before || inputs.base_revision }}
       head-revision: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
@@ -54,6 +54,6 @@ jobs:
     needs: java-production
     permissions:
       contents: write
-    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-publish.yml@44fb270c23edd85bdb5e294ad21e76bde36cc0e6
+    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-publish.yml@4969c1316ca7dd3e2648e4098eccf2d5e7dd37d9
     with:
       publication-artifact-name: template-java-project-canonical-publication
