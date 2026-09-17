@@ -30,14 +30,14 @@ tool.git-project release    v0.2.8
 exact Git commit            7c43f37e7b07cfb57638a1d1dad2501de09ba7eb
 Moon                        2.5.4
 
-tool.java-project release   v0.3.1
-exact Java tool commit      4969c1316ca7dd3e2648e4098eccf2d5e7dd37d9
+tool.java-project release   v0.3.2
+exact Java tool commit      c0ca2e1365a64bc626ca331a8170d13340ae0b36
 Java                        Eclipse Temurin 8.0.504+1
 Maven                       3.9.16
 Maven Wrapper               3.3.4
 ```
 
-`project.yml` uses the semantic Java tooling ref `v0.3.1`. Committed gitlinks and reusable workflow callers use the exact commits behind the released baselines. This combines readable release intent with immutable execution provenance.
+`project.yml` uses the semantic Java tooling ref `v0.3.2`. Committed gitlinks and reusable workflow callers use the exact commit behind that released baseline. This combines readable release intent with immutable execution provenance.
 
 ## What this repository proves
 
@@ -47,14 +47,18 @@ The shared production path proves:
 
 - one exact base-to-head affected preflight before Java runtime allocation;
 - README-only/unrelated changes stop before JDK, Maven, Windows and build publication;
-- ordinary affected Java changes resolve `windows-mode: auto` to Windows `smoke`;
+- pull requests use `windows-mode: auto`;
+- ordinary affected Java PRs resolve `auto` to Windows `smoke`;
 - Windows smoke runs the exact Linux-produced runnable JAR without a second Maven build;
-- build/toolchain/workflow-sensitive changes resolve `auto` to `full`;
-- `full` adds independent native Windows Maven `verify` and retains exact-artifact smoke;
-- a deliberate manual `full` override is available through `workflow_dispatch`;
+- build/toolchain/workflow-sensitive PRs resolve `auto` to `full`;
+- `full` starts independent native Windows Maven `verify` in parallel with the Linux canonical producer and retains exact-artifact smoke after Linux completes;
+- ordinary protected-`main` publication uses `windows-mode: none` because the source has already passed the required PR qualification;
+- deliberate manual qualification defaults to `full` and may explicitly select `auto|smoke|none`;
+- release-tag qualification always performs exact-source Linux, native full-Windows Maven verification and exact Linux-artifact smoke;
 - one canonical Linux Maven producer creates the artifact, tests and provenance evidence;
 - generated build publication reuses that prepared producer output and does not rebuild Maven output;
-- generated output is published to `dev/pr-N/bld` and `prod/bld`;
+- generated build output retains current preflight/orchestration and workflow timing evidence next to producer evidence;
+- generated output is published to `dev/pr-N/bld`, `prod/bld` and `rel/vX.Y.Z/bld`;
 - generic cleanup removes `dev/pr-N/bld` when a pull request closes.
 
 `moon.yml` is intentionally only the consumer-owned impact declaration. Maven remains Java build/test authority and `tool.java-project` owns the shared execution lifecycle.
@@ -93,8 +97,8 @@ bash tools/tool.java-project/java-project.sh canonical \
   --source-revision "$(git rev-parse HEAD)" \
   --repository brainboxemb/template.java-project \
   --publication-root bld \
-  --publication-artifact target/template-java-project-0.1.0-SNAPSHOT.jar
-java -jar bld/artifacts/template-java-project-0.1.0-SNAPSHOT.jar
+  --publication-artifact target/template-java-project-0.1.0.jar
+java -jar bld/artifacts/template-java-project-0.1.0.jar
 ```
 
 Windows bootstrap remains available through:
@@ -118,13 +122,14 @@ Verified canonical output is published as:
 ```text
 pull request #N  -> dev/pr-N/bld
 main             -> prod/bld
+release vX.Y.Z   -> rel/vX.Y.Z/bld
 ```
 
-The generated tree contains selected canonical artifacts plus producer evidence such as:
+The generated tree contains selected canonical artifacts plus producer and orchestration evidence such as:
 
 ```text
 artifacts/
-  template-java-project-0.1.0-SNAPSHOT.jar
+  template-java-project-0.1.0.jar
 
 evidence/
   toolchain-build-provenance.txt
@@ -133,11 +138,23 @@ evidence/
     execution.log
   tests/
 
+orchestration/
+  preflight/
+    decision.json
+    preflight.log
+    affected/
+  timing.json
+  timing.md
+
 README.md
 source-sha.txt
 ```
 
-The generated `README.md` is the human-facing evidence map. `source-sha.txt` and the common producer execution envelope identify the exact Java source that produced the retained output.
+The canonical `execution.log` is the retained Maven/build log. The preflight tree records the current base/head affected decision and selected Windows mode. `timing.md` and `timing.json` make real Maven/build time distinguishable from runner, setup and publication overhead.
+
+## Release
+
+`VERSION`, the root Maven version and the matching `CHANGELOG.md` section define a template release. A release request may tag only an already-qualified exact `main` commit. The tag is then verified independently by `.github/workflows/release-verify.yml`; only a green tagged run may publish `rel/vX.Y.Z/bld` and complete the GitHub Release.
 
 ## Scope rule
 
