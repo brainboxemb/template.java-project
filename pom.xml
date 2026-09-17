@@ -6,7 +6,7 @@
 
   <groupId>io.github.brainboxemb</groupId>
   <artifactId>template-java-project</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <name>template.java-project reference consumer</name>
   <description>Minimal external reference consumer for released tool.java-project baselines.</description>
 

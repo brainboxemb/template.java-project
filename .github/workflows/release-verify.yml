@@ -1,0 +1,105 @@
+name: Verify template release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-metadata:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.metadata.outputs.version }}
+      jar_name: ${{ steps.metadata.outputs.jar_name }}
+    steps:
+      - name: Checkout exact tagged source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Validate VERSION, Maven version and tag
+        id: metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(tr -d '\r\n' < VERSION)"
+          test "$GITHUB_REF_NAME" = "v${version}"
+          python3 - "$version" <<'PY'
+          import sys
+          import xml.etree.ElementTree as ET
+          expected = sys.argv[1]
+          ns = {'m': 'http://maven.apache.org/POM/4.0.0'}
+          root = ET.parse('pom.xml').getroot()
+          actual = root.find('m:version', ns).text.strip()
+          if actual != expected:
+              raise SystemExit('pom.xml version {} does not match VERSION {}'.format(actual, expected))
+          PY
+          grep -F "## ${version} " CHANGELOG.md
+          printf 'version=%s\n' "$version" >> "$GITHUB_OUTPUT"
+          printf 'jar_name=template-java-project-%s.jar\n' "$version" >> "$GITHUB_OUTPUT"
+
+  linux:
+    needs: release-metadata
+    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-verify.yml@c0ca2e1365a64bc626ca331a8170d13340ae0b36
+    with:
+      source-revision: ${{ github.sha }}
+      working-directory: .
+      java-version: '8.0.504+1'
+      maven-version: '3.9.16'
+      maven-wrapper-version: '3.3.4'
+      artifact-name: template-java-project-release-canonical
+      artifact-path: target/${{ needs.release-metadata.outputs.jar_name }}
+      runnable-jar-name: ''
+      smoke-expected-output: ''
+      test-report-path: target/surefire-reports/**
+      publication-artifact-paths: target/${{ needs.release-metadata.outputs.jar_name }}
+      windows-mode: none
+
+  windows-full:
+    needs: release-metadata
+    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-windows-compatibility.yml@c0ca2e1365a64bc626ca331a8170d13340ae0b36
+    with:
+      source-revision: ${{ github.sha }}
+      working-directory: .
+      java-version: '8.0.504+1'
+      maven-version: '3.9.16'
+      maven-wrapper-version: '3.3.4'
+      artifact-name: template-java-project-release-canonical
+      runnable-jar-name: ''
+      smoke-expected-output: ''
+      test-report-path: target/surefire-reports/**
+      windows-mode: full
+
+  windows-smoke:
+    needs:
+      - release-metadata
+      - linux
+    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-windows-compatibility.yml@c0ca2e1365a64bc626ca331a8170d13340ae0b36
+    with:
+      source-revision: ${{ github.sha }}
+      working-directory: .
+      java-version: '8.0.504+1'
+      maven-version: '3.9.16'
+      maven-wrapper-version: '3.3.4'
+      artifact-name: template-java-project-release-canonical
+      runnable-jar-name: ${{ needs.release-metadata.outputs.jar_name }}
+      smoke-expected-output: 'template.java-project OK'
+      test-report-path: target/surefire-reports/**
+      windows-mode: smoke
+
+  publish-build:
+    needs:
+      - release-metadata
+      - linux
+      - windows-full
+      - windows-smoke
+    permissions:
+      contents: write
+      actions: read
+    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-publish.yml@c0ca2e1365a64bc626ca331a8170d13340ae0b36
+    with:
+      publication-artifact-name: template-java-project-release-canonical-publication
+      source-revision: ${{ github.sha }}
