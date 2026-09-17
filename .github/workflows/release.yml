@@ -1,0 +1,32 @@
+name: Release template.java-project
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Immutable release tag, e.g. v0.1.0'
+        required: true
+        type: string
+      release_sha:
+        description: 'Exact already-verified main commit SHA to tag'
+        required: true
+        type: string
+  push:
+    branches:
+      - 'release-request/**'
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  release:
+    uses: brainboxemb/tool.git-project/.github/workflows/reusable-release.yml@v0.2.8
+    with:
+      version: ${{ inputs.version || '' }}
+      release_sha: ${{ inputs.release_sha || '' }}
+      required_main_workflows: |
+        java-verify.yml
+      tagged_verification_workflow: release-verify.yml
+      wait_for_tagged_verification: true
+      create_github_release: true
