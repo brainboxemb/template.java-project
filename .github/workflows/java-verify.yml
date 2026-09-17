@@ -29,13 +29,13 @@ jobs:
   java-production:
     permissions:
       contents: read
-    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-production.yml@4969c1316ca7dd3e2648e4098eccf2d5e7dd37d9
+    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-production.yml@1a578520260969909cf4b023f7956107f5d10a47
     with:
       base-revision: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'push' && github.event.before || inputs.base_revision }}
       head-revision: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
       affected-task: consumer:java.canonical
       windows-full-task: consumer:java.windows-full
-      windows-mode: ${{ github.event_name == 'workflow_dispatch' && inputs.windows_mode || 'auto' }}
+      windows-mode: ${{ github.event_name == 'workflow_dispatch' && inputs.windows_mode || github.event_name == 'push' && 'none' || 'auto' }}
       working-directory: .
       java-version: '8.0.504+1'
       maven-version: '3.9.16'
@@ -54,6 +54,8 @@ jobs:
     needs: java-production
     permissions:
       contents: write
-    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-publish.yml@4969c1316ca7dd3e2648e4098eccf2d5e7dd37d9
+      actions: read
+    uses: brainboxemb/tool.java-project/.github/workflows/reusable-java-publish.yml@1a578520260969909cf4b023f7956107f5d10a47
     with:
       publication-artifact-name: template-java-project-canonical-publication
+      preflight-artifact-name: template-java-project-canonical-preflight
