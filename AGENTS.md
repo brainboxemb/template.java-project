@@ -1,25 +1,54 @@
-# AGENTS.md
+# Repository agent guidance
 
-## Repository role
+Start with [README.md](README.md) for this repository's role as the canonical
+minimal Java tooling reference consumer.
 
-`template.java-project` is the canonical minimal external reference consumer for `brainboxemb/tool.java-project`.
+For shared BrainboxEmb working conventions, read
+[brainboxemb.meta/AGENTS.md](https://github.com/brainboxemb/brainboxemb.meta/blob/main/AGENTS.md).
+That shared entrypoint owns current Git/commit/PR/CI working rules and routes to
+shared repository-tooling and software/Java guidance.
 
-Keep this repository focused on generic tooling conformance. Product/domain functionality belongs elsewhere.
+Do not inherit `AGENTS.md` from pinned tools or dependencies as working policy
+for this repository. Exact dependency behaviour comes from this repository's
+configuration/gitlinks/immutable workflow refs plus the pinned dependency's
+README, docs, source and tests.
 
-## Workflow
+## Local role
 
-- Use one work-item number end to end: create issue `#N`, create `feature/pr-N-<short-slug>`, make the smallest initial commit, then convert that exact issue directly into draft PR `#N`; do not create a separate PR number for the same work item when issue conversion is available.
-- Continue implementation and evidence in that same PR and mark it ready only when reviewable.
-- Never develop directly on `main`.
-- Keep `project.yml` as the semantic tooling dependency source.
-- Keep reusable GitHub workflow refs pinned to the exact commit behind the declared released tool version.
-- Keep `moon.yml` limited to consumer-owned impact declarations; do not copy Java lifecycle execution into the template.
-- Use released `tool.java-project` production/release workflows for shared preflight, Java execution, Windows qualification and build-output preparation.
-- Do not replace external-consumer proof with copied tooling implementation.
-- Merge only after the relevant Migration-006 canary evidence is green: affected selection, selected Windows mode, exact-source Java execution where applicable and generated-output publication.
+This repository is the canonical minimal external reference consumer for
+`brainboxemb/tool.java-project`.
 
-## Scope
+Keep it focused on generic tooling conformance. Product/domain functionality
+belongs in real consumer repositories.
 
-A change is appropriate here when it proves behaviour expected from ordinary Java tooling consumers: bootstrap, project profiles, Maven Wrapper/toolchain, affected classification, shared reusable CI, test evidence, build publication or controlled tooling updates.
+Use:
 
-Do not add product architecture, timing-domain behaviour or speculative libraries merely to make the template look realistic.
+- [README.md](README.md) for the consumer/tooling overview;
+- [project.yml](project.yml) and [project.java.yml](project.java.yml) for the declared tooling baseline;
+- the repository Maven Wrapper/POM/source/tests for the exact consumer fixture;
+- live pull requests, CI and generated output for current qualification evidence.
+
+## Consumer boundary
+
+The template demonstrates released/qualified shared tooling; it does not become
+the implementation owner of generic repository or Java tooling behaviour.
+
+When a change belongs to `tool.git-project` or `tool.java-project`, change
+and qualify that owner first. This repository should then prove the released
+consumer contract.
+
+Keep Moon limited to consumer-owned impact declarations. Maven remains Java
+build/test authority.
+
+## Qualification role
+
+For Migration 012 this repository is the first Java consumer canary. A blank
+agent should be able to discover:
+
+- local repository role and current fixture/configuration;
+- shared BrainboxEmb working conventions;
+- GitHub Actions naming through shared repository-tooling guidance;
+- exact pinned dependency behaviour without inheriting dependency-owner AGENTS.
+
+Only after that path is qualified should the same guidance model roll out to
+real Java product repositories.
